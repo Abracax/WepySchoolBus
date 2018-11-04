@@ -5,14 +5,14 @@
 </view>
 
 <view class="center">
-<text id="LeftStationText" class="StationText" bindtap="changeStartStation">{{startStation}}</text>
+<text id="LeftStationText" class="StationText" @tap="changeStartStation">{{startStation}}</text>
 <view  class="whiteTab"  id="chooseStation">
-<button id="PressExchange" bindtap="TapExchange"  >
+<button id="PressExchange" @tap="TapExchange"  >
 <image src="./images/exchange.png " class="exchange" >
 </image>
 </button>
 </view>
-<text id="RightStationText" class="StationText" bindtap="changeEndStation">{{endStation}}</text>
+<text id="RightStationText" class="StationText" @tap="changeEndStation">{{endStation}}</text>
 </view>
   
 

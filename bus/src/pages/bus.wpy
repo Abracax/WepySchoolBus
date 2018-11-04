@@ -1,6 +1,7 @@
 <style  src="bus.wxss"></style>
 <template src="bus.wxml"></template>
 
+
 <script>
 import wepy from 'wepy'
 
@@ -29,9 +30,8 @@ export default class extends wepy.page {
       let tmp1, tmp2
       tmp1 = this.data.startStation
       tmp2 = this.data.endStation
-      this.setData({
-        startStation: tmp2,
-        endStation: tmp1})
+      this.startStation = tmp2
+      this.endStation = tmp1
     },
     changeStartStation() {
       let i
