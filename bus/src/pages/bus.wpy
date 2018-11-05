@@ -38,22 +38,25 @@ export default class extends wepy.page {
       for (i = 0; i < stations.length; i++) {
         if (stations[i][1] === this.data.startStation[1]) break
       }
-      this.setData({
-        test: StoreRow, startStation: stations[(i + 1) % 4]
-      })
+      this.startStation = stations[(i + 1) % 4]
     },
     changeEndStation() {
       let i
       for (i = 0; i < stations.length; i++) {
         if (stations[i][1] === this.data.endStation[1]) break
       }
-      this.setData({
-        test: StoreRow, endStation: stations[(i + 1) % 4]
-      })
+      this.endStation = stations[(i + 1) % 4]
     }
   }
-
-  onLoad() {
+  watch = {
+    startStation () {
+      this.modMainArray()
+    },
+    endStation () {
+      this.modMainArray()
+    }
+  }
+  modMainArray() {
     StoreRow = []
     for (let i = 0; i < Mydata.TestMessage['rows'].length; i++) {
       if (Mydata.TestMessage['rows'][i]['esite'][1] === this.data.endStation[1]) {
@@ -65,11 +68,11 @@ export default class extends wepy.page {
     for (let i = 0; i < numOfTabs; i++) {
       arr.push(i)
     }
-
-    this.setData({
-      test: StoreRow,
-      msg: headerImage.postBase[0],
-      enumerated: arr})
+    this.test = StoreRow
+    this.enumerated = arr
+  }
+  onLoad() {
+    this.modMainArray()
   }
 }
 </script>
