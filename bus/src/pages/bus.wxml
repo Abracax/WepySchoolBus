@@ -7,7 +7,7 @@
 <view class="center">
 <text id="LeftStationText" class="StationText" @tap="changeStartStation">{{startStation}}</text>
 <view  class="whiteTab"  id="chooseStation">
-<button id="PressExchange" @tap="TapExchange"  >
+<button id="PressExchange" @tap="TapExchange">
 <image src="./images/exchange.png " class="exchange" >
 </image>
 </button>
