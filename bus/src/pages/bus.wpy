@@ -374,6 +374,7 @@ text-align: center;
   font-size: 45rpx;
 }
 
+
 #botttom{
   position:relative;
 }
