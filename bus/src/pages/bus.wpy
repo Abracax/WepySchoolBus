@@ -1,5 +1,68 @@
-<style  src="bus.wxss"></style>
-<template src="bus.wxml"></template>
+
+<template>
+<view>
+  <view id="header" src="./imageBase64/header.json" style="background-image:url({{msg}})">
+    <text id="headerText">BUS</text>
+  </view>
+  <view class="center">
+    <text id="LeftStationText" class="StationText" @tap="changeStartStation">{{startStation}}</text>
+    <view  class="whiteTab"  id="chooseStation">
+      <button id="PressExchange" @tap="TapExchange">
+        <image src="./images/exchange.png " class="exchange"></image>
+      </button>   
+    </view>
+    <text id="RightStationText" class="StationText" @tap="changeEndStation">{{endStation}}</text>
+  </view>
+
+<view class="center" id="bottom">
+<view class="center" id="history">
+  <view class="whiteTab" id="appoi" >
+    查看历史预约
+  </view>
+</view>
+</view>
+
+  <view id="date" class="center">
+  <view class="center">{{year}}年{{month}}月{{day}}日</view>
+  <picker-view indicator-style="height: 50px;" style="width: 90%; height: 40px;" value="{{value}}" bindchange="dateChange" class="whiteTab">
+    <picker-view-column>
+      <view wx:for="{{years}}" style="postion:relative; line-height: 30px;top:5rpx;">{{item}}年</view>
+    </picker-view-column>
+    <picker-view-column>
+      <view wx:for="{{months}}" style="postion:relative; line-height: 30px;top:5rpx;">{{item}}月</view>
+    </picker-view-column>
+    <picker-view-column>
+      <view wx:for="{{days}}" style="postion:relative; line-height: 30px;top:5rpx;">{{item}}日</view>
+    </picker-view-column>
+  </picker-view>
+</view>
+
+
+  <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
+    <view class="try" style="top:{{idx*250+360}}rpx" id="{{test[idx]['classid']}}" src="./bus.js" >
+      <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
+        {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
+      </view>
+      <view wx:else class="smallSite">
+        {{test[idx]['ssite']}}--{{test[idx]['esite']}}
+      </view> 
+      <view wx:if="{{test[idx]['ptime']!='-'}}" class="bigTime">
+        {{test[idx]['stime']}}--{{test[idx]['ptime']}}--{{test[idx]['etime']}}
+      </view>
+      <view wx:else class="bigTime">
+        {{test[idx]['stime']}}--{{test[idx]['etime']}}
+      </view>
+      <view>
+        <button class="appoint">
+      ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
+      <image src="./images/plus.png" id="plus"></image>
+      </button>
+      </view>
+    </view>
+  </view>
+
+</view>
+</template>
 
 
 <script>
@@ -9,6 +72,20 @@ const headerImage = require('./imageBase64/header.js')
 const Mydata = require('./imageBase64/exportExmapleData.js')
 let stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
 let StoreRow = []
+
+const date = new Date()
+const years = []
+const months = []
+const days = []
+for (let i = 2018; i <= (date.getFullYear() + 1); i++) {
+  years.push(i)
+}
+for (let i = 1; i <= 12; i++) {
+  months.push(i)
+}
+for (let i = 1; i <= 31; i++) {
+  days.push(i)
+}
 
 export default class extends wepy.page {
   config = {
@@ -22,38 +99,65 @@ export default class extends wepy.page {
     test: '',
     time: 'ok',
     date: 'ok',
-    msg: headerImage.postBase[0]
+    msg: headerImage.postBase[0],
+    years: years,
+    year: date.getFullYear(),
+    months: months,
+    month: date.getMonth(),
+    days: days,
+    day: date.getDate(),
+    value: [9999, 11, 11]
   }
-
   methods = {
     TapExchange() {
+      this.modMainArray()
       let tmp1, tmp2
       tmp1 = this.data.startStation
       tmp2 = this.data.endStation
       this.startStation = tmp2
       this.endStation = tmp1
+      this.$apply()
+      this.modMainArray()
+      this.$apply()
     },
     changeStartStation() {
+      this.modMainArray()
       let i
       for (i = 0; i < stations.length; i++) {
         if (stations[i][0] === this.data.startStation[0]) break
       }
-      this.startStation = stations[(i + 1) % 4]
+      this.startStation = stations[(i + 1) % stations.length]
+      this.$apply()
+      this.modMainArray()
+      this.$apply()
     },
     changeEndStation() {
+      this.modMainArray()
       let i
       for (i = 0; i < stations.length; i++) {
         if (stations[i][0] === this.data.endStation[0]) break
       }
-      this.endStation = stations[(i + 1) % 4]
+      this.endStation = stations[(i + 1) % stations.length]
+      this.$apply()
+      this.modMainArray()
+    },
+    dateChange: function(e) {
+      const val = e.detail.value
+      this.setData({
+        year: this.data.years[val[0]],
+        month: this.data.months[val[1]],
+        day: this.data.days[val[2]]
+      })
     }
   }
   watch = {
     startStation () {
       this.modMainArray()
+      this.$apply()
     },
     endStation () {
       this.modMainArray()
+      this.$apply()
     }
   }
   modMainArray() {
@@ -70,9 +174,179 @@ export default class extends wepy.page {
     }
     this.test = StoreRow
     this.enumerated = arr
+    this.$apply()
   }
-  onLoad() {
+  async onLoad() {
     this.modMainArray()
+    this.$apply()
+    thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + date.getDate().toString()
+    try {
+    businfo = (await wepy.$http({
+        url: '/bus/:thisDate',
+        method: 'get'
+    })).data
+    wepy.$storage.setAsync("businfo", businfo)
+    this.$apply()
+    } catch (error) {        
+    }
   }
 }
 </script>
+
+<style>
+page {
+  display: block;
+  min-height: 100%;
+  background-color:rgb(42, 60, 85);
+}
+
+#header{
+  width: 100%; 
+  height: 200rpx;
+  background-image:'';
+  color:aliceblue;
+  background-size:1000px 600px;
+  }
+
+#headerText{
+  position: relative;
+  bottom:-70rpx;
+  font-family: "Times New Roman";
+  font-size: 100rpx;
+  left:30rpx;
+}
+
+.whiteTab{
+  text-align: center;
+  width:90%;
+  border-radius: 30rpx;
+  background-color: white;
+  background-size:1000px 500px;
+  position:absolute;
+
+}
+
+ #chooseStation{
+  background-color: rgb(190, 236, 245);
+  margin-top:50rpx;
+  height:150rpx;
+  text-align: center;border:none;
+  align-items: center;
+}
+
+.center{
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  vertical-align: center;
+}
+
+ #PressExchange{
+  height: 150rpx;
+  width:200rpx;
+  border:none;
+  color: rgb(190, 236, 245);
+  background-color: rgb(190, 236, 245);
+}
+#PressExchange::after{
+  border: none;
+}
+
+.exchange{
+  margin-top:25rpx;
+  height: 100rpx;
+  width:100rpx;
+}
+
+.StationText{
+position:relative;
+  font-size: 35rpx;
+  top:100rpx;
+  z-index: 999;
+border-bottom: 2px rgb(96, 102, 116) solid;
+}
+
+#LeftStationText{
+  left:-120rpx;
+}
+
+#RightStationText{
+  
+  left:120rpx;
+  
+}
+
+#chooseBus{
+  margin-top: 200rpx;
+  height:150rpx;
+  text-align: center;
+  align-items: center;
+}
+
+.try{
+text-align: center;
+  width:90%;
+  border-radius: 30rpx;
+  background-color:#F0F8FF;
+  background-size:1000px 500px;
+  position:absolute;
+  margin-top: 200rpx;
+  height:150rpx;
+  align-items: center;
+  vertical-align: center;
+}
+
+.smallSite{
+  font-size: 25rpx;
+  position:relative;
+}
+
+.bigTime{
+  font-size: 50rpx;
+}
+
+#date{
+  position: relative;
+  top:190rpx;
+  vertical-align: center;
+}
+
+#plus{
+  height: 45rpx;
+  width:45rpx;
+  border:none;
+}
+.appoint{
+  height: 55rpx;
+  width:50%;
+  border:none;
+  background-color:#F0F8FF;
+  border:none;
+  vertical-align: center;
+  font-size:30rpx;
+  position:relative;
+  align-content: center;
+}
+
+#history{
+  background-color: rgb(190, 236, 245);
+  width:40%;
+  border-radius:2rpx;
+  position:absolute;
+  bottom:10rpx;
+}
+
+#appoi{
+  background-color: rgb(190, 236, 245);
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  vertical-align: center;
+  border-radius:3rpx;
+}
+
+#botttom{
+  position:absolute;
+  bottom:50rpx;
+}
+</style>
