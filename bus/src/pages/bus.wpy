@@ -69,7 +69,6 @@
 import wepy from 'wepy'
 
 const headerImage = require('./imageBase64/header.js')
-const Mydata = require('./imageBase64/exportExmapleData.js')
 let stations = ['紫金港校区', '海宁国际校区', '玉泉校区', '华家池校区']
 let StoreRow = []
 
@@ -150,7 +149,8 @@ export default class extends wepy.page {
       this.setData({
         year: this.data.years[val[0]],
         month: this.data.months[val[1]],
-        day: this.data.days[val[2]]
+        day: this.data.days[val[2]],
+        thisDate: this.data.years[val[0]].toString()+ '-' +this.data.months[val[1]].toString() + '-' + this.data.days[val[2]].toString()
       })
     }
   }
@@ -166,9 +166,9 @@ export default class extends wepy.page {
   }
   modMainArray() {
     StoreRow = []
-    for (let i = 0; i < Mydata.TestMessage['rows'].length; i++) {
-      if (Mydata.TestMessage['rows'][i]['esite'][0] === this.data.endStation[0]) {
-        StoreRow.push(Mydata.TestMessage['rows'][i])
+    for (let i = 0; i < businfo['rows'].length; i++) {
+      if (businfo['rows'][i]['esite'][0] === this.data.endStation[0]) {
+        StoreRow.push(businfo['rows'][i])
       }
     }
     let numOfTabs = StoreRow.length
@@ -190,9 +190,9 @@ export default class extends wepy.page {
         url: urlTmp,
         method: 'get'
     })).data
-    wepy.$storage.setAsync("businfo", this.businfo)
     this.$apply()
-    } catch (error) {        
+    } catch (error) {
+      alert('当前日期无班车')        
     }
   }
 }
