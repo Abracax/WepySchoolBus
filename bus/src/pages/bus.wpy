@@ -77,6 +77,9 @@ const date = new Date()
 const years = []
 const months = []
 const days = []
+
+let thisDate
+
 for (let i = 2018; i <= (date.getFullYear() + 1); i++) {
   years.push(i)
 }
@@ -106,7 +109,8 @@ export default class extends wepy.page {
     month: date.getMonth(),
     days: days,
     day: date.getDate(),
-    value: [9999, 11, 11]
+    value: [9999, 11, 11],
+    businfo:{}
   }
   methods = {
     TapExchange() {
@@ -180,12 +184,13 @@ export default class extends wepy.page {
     this.modMainArray()
     this.$apply()
     thisDate= date.getFullYear().toString()+ '-' +date.getMonth().toString() + '-' + date.getDate().toString()
+    let urlTmp = '/bus/'+ thisDate
     try {
-    businfo = (await wepy.$http({
-        url: '/bus/:thisDate',
+    this.businfo = (await wepy.$http({
+        url: urlTmp,
         method: 'get'
     })).data
-    wepy.$storage.setAsync("businfo", businfo)
+    wepy.$storage.setAsync("businfo", this.businfo)
     this.$apply()
     } catch (error) {        
     }
