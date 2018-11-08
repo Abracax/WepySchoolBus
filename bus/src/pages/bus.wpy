@@ -1,4 +1,3 @@
-
 <template>
 <view>
   <view id="header" src="./imageBase64/header.json" style="background-image:url({{msg}})">
@@ -13,14 +12,6 @@
     </view>
     <text id="RightStationText" class="StationText" @tap="changeEndStation">{{endStation}}</text>
   </view>
-
-<view class="center" id="bottom">
-<view class="center" id="history">
-  <view class="whiteTab" id="appoi" >
-    查看历史预约
-  </view>
-</view>
-</view>
 
   <view id="date" class="center">
   <view class="center">{{year}}年{{month}}月{{day}}日</view>
@@ -61,6 +52,13 @@
     </view>
   </view>
 
+<view class="center" id="bottom">
+<view class="center" id="history">
+  <view class="whiteTab" id="appoi" @tap="navigateHistory" >
+    查看历史预约
+  </view>
+</view>
+</view>
 </view>
 </template>
 
@@ -175,6 +173,17 @@ export default class extends wepy.page {
     } catch (error) {
       alert('预约失败')        
     }
+    },
+    navigateHistory: function (event) {
+      wx.navigateTo({
+      url: "./busHistory",//url跳转地址
+      success: function (res) {
+        console.log(res)
+      },
+      fail:function(res){
+        console.log(res)
+      }
+    })
     }
   }
   modMainArray() {
@@ -350,9 +359,9 @@ text-align: center;
 #history{
   background-color: rgb(190, 236, 245);
   width:40%;
-  border-radius:2rpx;
+  border-radius:4rpx;
   position:absolute;
-  bottom:10rpx;
+  bottom:10%;
 }
 
 #appoi{
@@ -361,11 +370,11 @@ text-align: center;
   text-align: center;
   justify-content: center;
   vertical-align: center;
-  border-radius:3rpx;
+  border-radius:5rpx;
+  font-size: 45rpx;
 }
 
 #botttom{
-  position:absolute;
-  bottom:50rpx;
+  position:relative;
 }
 </style>
