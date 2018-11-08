@@ -39,7 +39,7 @@
 
 
   <view class="center"  wx:for="{{enumerated}}" wx:for-index="idx" wx:for-item="itemName" wx:key="item" > 
-    <view class="try" style="top:{{idx*250+360}}rpx" id="{{test[idx]['classid']}}" src="./bus.js" >
+    <view class="try" style="top:{{idx*250+360}}rpx" id="{{test[idx]['classid']}}" >
       <view wx:if="{{test[idx]['psite']!='-'}}" class="smallSite">
         {{test[idx]['ssite']}}--{{test[idx]['psite']}}--{{test[idx]['esite']}}
       </view>
@@ -53,7 +53,7 @@
         {{test[idx]['stime']}}--{{test[idx]['etime']}}
       </view>
       <view>
-        <button class="appoint">
+        <button class="appoint" @tap="startAppointment">
       ({{test[idx]['booknum']}}/{{test[idx]['busnum']}})\r\t\r\t\r\t\r\t\r\t
       <image src="./images/plus.png" id="plus"></image>
       </button>
@@ -109,7 +109,8 @@ export default class extends wepy.page {
     days: days,
     day: date.getDate(),
     value: [9999, 11, 11],
-    businfo:{}
+    businfo:{},
+
   }
   methods = {
     TapExchange() {
@@ -146,12 +147,36 @@ export default class extends wepy.page {
     },
     dateChange: function(e) {
       const val = e.detail.value
-      this.setData({
+      if (this.data.days[val[2]] > 9){
+        this.setData({
         year: this.data.years[val[0]],
         month: this.data.months[val[1]],
         day: this.data.days[val[2]],
         thisDate: this.data.years[val[0]].toString()+ '-' +this.data.months[val[1]].toString() + '-' + this.data.days[val[2]].toString()
       })
+      } else{
+        this.setData({
+        year: this.data.years[val[0]],
+        month: this.data.months[val[1]],
+        day: this.data.days[val[2]],
+        thisDate: this.data.years[val[0]].toString()+ '-' +this.data.months[val[1]].toString() + '-' +  '0' + this.data.days[val[2]].toString()
+      })
+      }     
+    },
+    async startAppointment() {
+      let MsgSend={}
+      MsgSend['code'] = 0
+      MsgSend['message'] = 'ok'
+      MsgSend['data'] = this.StoreRow
+      try {
+      await wepy.$http({
+          url: '/reserve',
+          method: 'post'
+    })
+    this.$apply()
+    } catch (error) {
+      alert('预约失败')        
+    }
     }
   }
   watch = {
